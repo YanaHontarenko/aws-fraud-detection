@@ -1,6 +1,7 @@
 """
 https://docs.aws.amazon.com/frauddetector/latest/ug/building-a-model.html
 """
+from model_building import check_model
 
 
 def create_detector(client, detector_id, event_type_name):
@@ -19,16 +20,18 @@ def create_detector_version(client, detector_id, rules, model_id, model_type, mo
             "ruleVersion": "1"
         })
 
-    client.create_detector_version(detectorId=detector_id,
-                                   rules=detection_rules,
-                                   modelVersions=[{
-                                       'modelId': model_id,
-                                       'modelType': model_type,
-                                       'modelVersionNumber': model_version
-                                   }],
-                                   ruleExecutionMode=rule_execution_mode)
-
-    print("Detector version is created!")
+    if check_model(client, model_id, model_version, model_type) == "ACTIVE":
+        client.create_detector_version(detectorId=detector_id,
+                                       rules=detection_rules,
+                                       modelVersions=[{
+                                           'modelId': model_id,
+                                           'modelType': model_type,
+                                           'modelVersionNumber': model_version
+                                       }],
+                                       ruleExecutionMode=rule_execution_mode)
+        print("Detector version is created!")
+    else:
+        print("Model isn't active")
 
 
 def check_detector(client, detector_id):
