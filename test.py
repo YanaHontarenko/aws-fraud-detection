@@ -44,5 +44,5 @@ if __name__ == "__main__":
                           region_name=region_name)
     score, rule, outcomes = test_on_sample(client)
     print(f"Score: {score}")
-    print(f"Rule: {score}")
-    print(f"Score: {score}")
+    print(f"Rule: {rule}")
+    print(f"Score: {outcomes[0]}")
