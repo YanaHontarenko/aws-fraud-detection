@@ -2,61 +2,52 @@
 https://docs.aws.amazon.com/frauddetector/latest/ug/building-a-model.html
 """
 
-from model_building import check_model
+
+def create_detector(client, detector_id, event_type_name):
+    client.put_detector(detectorId=detector_id,
+                        eventTypeName=event_type_name)
+
+    print("Detector is created")
 
 
-def create_detector(client):
-    client.put_detector(
-        detectorId='sample_detector',
-        eventTypeName='sample_registration'
-    )
+def create_detector_version(client, detector_id, rules, model_id, model_type, model_version, rule_execution_mode):
+    detection_rules = []
+    for rule in rules:
+        detection_rules.append({
+            "detectorId": detector_id,
+            "ruleId": rule['name'],
+            "ruleVersion": "1"
+        })
+
+    client.create_detector_version(detectorId=detector_id,
+                                   rules=detection_rules,
+                                   modelVersions=[{
+                                       'modelId': model_id,
+                                       'modelType': model_type,
+                                       'modelVersionNumber': model_version
+                                   }],
+                                   ruleExecutionMode=rule_execution_mode)
+
+    print("Detector version is created!")
 
 
-def create_detector_version(client):
-    client.create_detector_version(
-        detectorId='sample_detector',
-        rules=[{
-            'detectorId': 'sample_detector',
-            'ruleId': 'high_fraud_risk',
-            'ruleVersion': '1'
-        },
-        {
-            'detectorId': 'sample_detector',
-            'ruleId': 'medium_fraud_risk',
-            'ruleVersion': '1'
-        },
-        {
-            'detectorId': 'sample_detector',
-            'ruleId': 'low_fraud_risk',
-            'ruleVersion': '1'
-        }],
-        modelVersions=[{
-            'modelId': 'sample_fraud_detection_model',
-            'modelType': 'ONLINE_FRAUD_INSIGHTS',
-            'modelVersionNumber': '1.00'
-        }],
-        ruleExecutionMode='FIRST_MATCHED'
-    )
-
-
-def check_detector(client):
-    response = client.describe_detector(
-        detectorId='sample_detector',
-        nextToken='string',
-        maxResults=1000
-    )
+def check_detector(client, detector_id):
+    response = client.describe_detector(detectorId=detector_id,
+                                        nextToken='string',
+                                        maxResults=1000)
 
     return response["detectorVersionSummaries"][0]["status"]
 
 
-def deploy_detector(client):
-    if check_detector(client) == "DRAFT":
+def deploy_detector(client, detector_id, detector_version):
+    if check_detector(client, detector_id) == "DRAFT":
         client.update_detector_version_status(
-            detectorId='sample_detector',
-            detectorVersionId='1',
+            detectorId=detector_id,
+            detectorVersionId=detector_version,
             status='ACTIVE'
         )
+        print("Detector is activated!")
     else:
-        return "Activating isn't complete"
+        print("Detector isn't created")
 
-# TODO: Add more parameters and comments
+# TODO: Add more comments

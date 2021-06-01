@@ -1,109 +1,80 @@
-def create_variables(client):
+def create_variables(client, variables):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-a-variable.html
     """
 
-    # Create variable email_address
-    client.create_variable(
-        name='email_address',
-        variableType='EMAIL_ADDRESS',
-        dataSource='EVENT',
-        dataType='STRING',
-        defaultValue='<unknown>'
-    )
+    for variable in variables:
+        client.create_variable(name=variable["name"],
+                               variableType=variable["type"],
+                               dataSource=variable["source"],
+                               dataType=variable["data_type"],
+                               defaultValue=variable["default"])
 
-    # Create variable ip_address
-    client.create_variable(
-        name='ip_address',
-        variableType='IP_ADDRESS',
-        dataSource='EVENT',
-        dataType='STRING',
-        defaultValue='<unknown>'
-    )
+    print("Variables are created!")
 
 
-def create_entity_type(client):
+def create_entity_type(client, entity_type_name, entity_type_description):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-an-entity-type.html
     """
-    client.put_entity_type(
-        name='sample_customer',
-        description='sample customer entity type')
+    client.put_entity_type(name=entity_type_name,
+                           description=entity_type_description)
+
+    print("Entity type is created!")
 
 
-def create_label(client):
+def create_label(client, labels):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-a-label.html
     """
-    client.put_label(
-        name='fraud',
-        description='label for fraud events'
-    )
 
-    client.put_label(
-        name='legit',
-        description='label for legitimate events'
-    )
+    for label in labels:
+        client.put_label(name=label["name"],
+                         description=label["description"])
+
+    print("Labels are created!")
 
 
-def create_event_type(client):
+def create_event_type(client, event_type_name, variables, labels, entity_type_name):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-event-type.html
     """
-    client.put_event_type(
-        name='sample_registration',
-        eventVariables=['ip_address', 'email_address'],
-        labels=['legit', 'fraud'],
-        entityTypes=['sample_customer'])
+    var_names = [variable["name"] for variable in variables]
+    label_names = [label["name"] for label in labels]
+
+    client.put_event_type(name=event_type_name,
+                          eventVariables=var_names,
+                          labels=label_names,
+                          entityTypes=[entity_type_name])
+
+    print("Event type is created!")
 
 
-def create_rules(client):
+def create_rules(client, rules, detector_id):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-a-rule.html
     """
-    client.create_rule(
-        ruleId='high_fraud_risk',
-        detectorId='sample_detector',
-        expression='$sample_fraud_detection_model_insightscore > 900',
-        language='DETECTORPL',
-        outcomes=['verify_customer']
-    )
 
-    client.create_rule(
-        ruleId='medium_fraud_risk',
-        detectorId='sample_detector',
-        expression='$sample_fraud_detection_model_insightscore <= 900 and $sample_fraud_detection_model_insightscore > 700',
-        language='DETECTORPL',
-        outcomes=['review']
-    )
+    for rule in rules:
+        client.create_rule(ruleId=rule["rule_id"],
+                           detectorId=detector_id,
+                           expression=rule["expression"],
+                           language='DETECTORPL',
+                           outcomes=[rule["outcome"]])
 
-    client.create_rule(
-        ruleId='low_fraud_risk',
-        detectorId='sample_detector',
-        expression='$sample_fraud_detection_model_insightscore <= 700',
-        language='DETECTORPL',
-        outcomes=['approve']
-    )
+    print("Rules are created")
 
 
-def create_outcomes(client):
+def create_outcomes(client, outcomes):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-an-outcome.html
     """
-    client.put_outcome(
-        name='verify_customer',
-        description='this outcome initiates a verification workflow'
-    )
 
-    client.put_outcome(
-        name='review',
-        description='this outcome sidelines event for review'
-    )
+    for outcome in outcomes:
+        client.put_outcome(name=outcome["name"],
+                           description=outcome["description"])
 
-    client.put_outcome(
-        name='approve',
-        description='this outcome approves the event'
-    )
+    print("Outcomes are created!")
 
 
-# TODO: Add more parameters and comments
+# TODO: Add comments
