@@ -56,7 +56,7 @@ def create_rules(client, rules, detector_id):
     """
 
     for rule in rules:
-        client.create_rule(ruleId=rule["rule_id"],
+        client.create_rule(ruleId=rule["name"],
                            detectorId=detector_id,
                            expression=rule["expression"],
                            language='DETECTORPL',
