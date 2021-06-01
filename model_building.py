@@ -50,7 +50,9 @@ def deploy_model(client, model_id, model_type, model_version):
             status='ACTIVE'
         )
         print("Model deploying is started..")
+        return True
     else:
         print("Training isn't completed")
+        return False
 
 # TODO: Add more comments

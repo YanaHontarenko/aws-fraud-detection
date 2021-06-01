@@ -47,7 +47,9 @@ def deploy_detector(client, detector_id, detector_version):
             status='ACTIVE'
         )
         print("Detector is activated!")
+        return True
     else:
         print("Detector isn't created")
+        return False
 
 # TODO: Add more comments
