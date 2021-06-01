@@ -39,12 +39,12 @@ def create_detector_version(client):
 
 def check_detector(client):
     response = client.describe_detector(
-        detectorId='sample_detector_boto',
+        detectorId='sample_detector',
         nextToken='string',
         maxResults=1000
     )
 
-    print(response["detectorVersionSummaries"][0]["status"])
+    return response["detectorVersionSummaries"][0]["status"]
 
 
 def deploy_detector(client):

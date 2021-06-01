@@ -40,7 +40,7 @@ def check_model(client):
         maxResults=1
     )
 
-    return response["status"]
+    return response["modelVersionDetails"][0]["status"]
 
 
 def deploy_model(client):
