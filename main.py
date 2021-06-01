@@ -86,7 +86,7 @@ if __name__ == "__main__":
     detector_version = os.environ.get("DETECTOR_VERSION")
     rule_execution_mode = os.environ.get("RULE_EXECUTION_MODE")
     s3_input = os.environ.get("S3_INPUT")
-    s3_output = os.environ.get("S3_output")
+    s3_output = os.environ.get("S3_OUTPUT")
     role_arn = os.environ.get("ROLE_ARN")
 
     client = boto3.client("frauddetector",
