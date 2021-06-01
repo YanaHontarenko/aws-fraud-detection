@@ -3,7 +3,9 @@
 from create_components import *
 from model_building import *
 from detector_building import *
+
 from dotenv import load_dotenv
+from time import sleep
 
 import boto3
 import os
@@ -100,9 +102,15 @@ if __name__ == "__main__":
     create_event_type(client, event_type_name, variables, labels, entity_type_name)
     create_model(client, model_id, event_type_name, model_type)
     train_model(client, s3_input, role_arn, model_id, model_type, variables, mapper)
+    while check_model(client, model_id, model_version, model_type) != "TRAINING_COMPLETE":
+        sleep(60)
+        print("Training isn't completed")
     deploy_model(client, model_id, model_type, model_version)
     create_detector(client, detector_id, event_type_name)
     create_outcomes(client, outcomes)
     create_rules(client, rules, detector_id)
+    while check_model(client, model_id, model_version, model_type) != "ACTIVE":
+        sleep(60)
+        print("Model isn't deployed")
     create_detector_version(client, detector_id, rules, model_id, model_type, model_version, rule_execution_mode)
     deploy_detector(client, detector_id, detector_version)
