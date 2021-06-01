@@ -26,11 +26,9 @@ def create_entity_type(client):
     """
     https://docs.aws.amazon.com/frauddetector/latest/ug/create-an-entity-type.html
     """
-    client.put_event_type(
-        name='sample_registration',
-        eventVariables=['ip_address', 'email_address'],
-        labels=['legit', 'fraud'],
-        entityTypes=['sample_customer'])
+    client.put_entity_type(
+        name='sample_customer',
+        description='sample customer entity type')
 
 
 def create_label(client):
