@@ -2,6 +2,8 @@
 https://docs.aws.amazon.com/frauddetector/latest/ug/building-a-model.html
 """
 
+from model_building import check_model
+
 
 def create_detector(client):
     client.put_detector(
@@ -48,7 +50,7 @@ def check_detector(client):
 
 
 def deploy_detector(client):
-    if check_detector(client) == "ACTIVE":
+    if check_detector(client) == "DRAFT":
         client.update_detector_version_status(
             detectorId='sample_detector',
             detectorVersionId='1',
